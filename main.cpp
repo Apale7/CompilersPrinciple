@@ -1,6 +1,6 @@
 #include "Preprocessor.h"
-
-#define FILENAME "main.cpp"
+#include "LexicalAnalyzer.h"
+#define FILENAME "test.txt"
 
 int main()
 {
@@ -8,6 +8,15 @@ int main()
     /*this is another comment*/
     auto p = Preprocessor(FILENAME);
     auto &&code = p.pretreatment();
-    cout << code;
+    cout << code << "\n\n";
+    auto lex = LexicalAnalyzer();
+    int i = 0;
+    codeVal t;
+    do
+    {
+        while (code[i] == ' ')++i;
+        t = lex.scanner(code ,i);
+        printf("(%c, %s)\n", t.code, t.val->empty() ? "NULL" : t.val->c_str());
+    }while (t.code != '#');
     return 0;
 }

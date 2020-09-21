@@ -37,6 +37,8 @@ string &&Preprocessor::pretreatment()
                 {
                     if (c1 == '\t' || c1 == '\n')
                         c1 = ' ';
+                    else if (isupper(c1))
+                        c1 += 32;
                     result->push_back(c1);
                 }
             }

@@ -6,11 +6,13 @@
 #include <sstream>
 #include <iostream>
 #include <unordered_map>
+#include <unordered_set>
 using std::ifstream;
 using std::string;
 using std::ios;
 using std::cout;
 using std::unordered_map;
+using std::unordered_set;
 #ifndef COMPILERSPRINCIPLE_PREPROCESSOR_H
 #define COMPILERSPRINCIPLE_PREPROCESSOR_H
 
