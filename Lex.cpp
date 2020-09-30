@@ -6,8 +6,12 @@
 #include <cassert>
 #include "utils.h"
 
-Lex::Lex(string reg, string charset) : reg(std::move(reg)), charSet(charset.begin(), charset.end())
+Lex::Lex(string reg, string inputset) : reg(std::move(reg))
 {
+    charSet.insert(inputset.begin(), inputset.end());
+    string op = "+()*|";
+    charSet.insert(op.begin(), op.end());
+    inputSet.insert(inputset.begin(), inputset.end());
 }
 
 void Lex::setReg(const string &reg)
@@ -70,13 +74,14 @@ void Lex::buildNFA()
                 case '|':
                 {
                     NFA tmp;
+                    NFA b = stk.top();
+                    stk.pop();
                     NFA a = stk.top();
                     stk.pop();
                     size_t size1 = tmp.size();
                     tmp += a;
                     tmp[tmp.start]['e'].emplace_back(a.start + size1);
-                    NFA b = stk.top();
-                    stk.pop();
+
                     size_t size2 = tmp.size();
                     tmp += b;
                     tmp[tmp.start]['e'].emplace_back(b.start + size2);
@@ -144,7 +149,7 @@ void Lex::buildNFA()
     nfa = stk.top();
 }
 
-void Lex::showFA()
+void Lex::showNFA()
 {
     for (int i = 0; i < nfa.size(); ++i)
     {
@@ -152,4 +157,67 @@ void Lex::showFA()
             for (auto &v: k.second)
                 std::cout << i << ' ' << k.first << ' ' << v << std::endl;
     }
+}
+
+void Lex::buildDFA()
+{
+    move(e_closure(6), 'a');
+//    vector<DStat> Dstats;
+//    Dstats.emplace_back(e_closure(nfa.start));
+//    Dstats.back().id = 0;
+//    set<DStat> vis;
+//    for (int i = 0; i < Dstats.size(); ++i)
+//    {
+//        vis.insert(Dstats[i]);
+//        for (auto c: inputSet)
+//        {
+//            c
+//        }
+//    }
+}
+
+Lex::DStat Lex::e_closure(int s)
+{
+    DStat stat;
+    stat.stats.emplace_back(s);
+    stack<int> stk;
+    stk.emplace(s);
+    unordered_set<int> vis;
+    while (!stk.empty())
+    {
+        int i = stk.top();
+        stk.pop();
+        vis.insert(i);
+        for (auto &v: nfa[i]['e'])
+        {
+            if (vis.find(v) != vis.end()) continue;
+            stat.stats.emplace_back(v);
+            stk.emplace(v);
+        }
+    }
+    std::sort(stat.stats.begin(), stat.stats.end());
+    for (auto &i: stat.stats)
+        std::cout << i << ' ';
+    std::cout << '\n';
+    return stat;
+}
+
+Lex::DStat Lex::move(const Lex::DStat &T, char a)
+{
+    DStat stat;
+    unordered_set<int> vis;
+    for (auto &i: T.stats)
+        if (nfa[i].find('a') != nfa[i].end())
+            for (auto &v: nfa[i]['a'])
+            {
+                if (vis.find(v) == vis.end())
+                {
+                    vis.insert(v);
+                    stat.stats.emplace_back(v);
+                }
+            }
+    std::sort(stat.stats.begin(), stat.stats.end());
+    for (auto &i: stat.stats)
+        std::cout << i << ' ';
+    return stat;
 }

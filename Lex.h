@@ -9,10 +9,12 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <set>
 #include <iostream>
 #include <cassert>
+#include <algorithm>
 
-using std::string, std::vector, std::unordered_map, std::unordered_set;
+using std::string, std::vector, std::unordered_map, std::unordered_set, std::set;
 
 class Lex
 {
@@ -52,11 +54,34 @@ class Lex
         }
     };
 
-    const unordered_set<char> charSet;
+    struct DStat
+    {
+        vector<int> stats;
+        int id;
+
+        bool operator<(const DStat &d) const
+        {
+            return stats < d.stats;
+        }
+    };
+
+    struct DFA
+    {
+        vector<unordered_map<char, int>> G;
+        int start, end;
+    };
+
+
+    unordered_set<char> charSet;
+    unordered_set<char> inputSet;
     string reg;
+
+    DStat e_closure(int s);
+    DStat move(const DStat&, char);
 public:
     NFA nfa;
-    Lex(string reg, string charset);
+
+    Lex(string reg, string inputset);
 
     Lex(string charset);
 
@@ -67,7 +92,10 @@ public:
     static inline int statusCode(char a);
 
     void buildNFA();
-    void showFA();
+
+    void buildDFA();
+
+    void showNFA();
 };
 
 

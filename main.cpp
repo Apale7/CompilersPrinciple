@@ -1,6 +1,7 @@
 #include "Preprocessor.h"
 #include "LexicalAnalyzer.h"
 #include "Lex.h"
+
 #define FILENAME "test.txt"
 
 int main()
@@ -19,9 +20,10 @@ int main()
 //        t = lex.scanner(code ,i);
 //        printf("(%c, %s)\n", t.code, t.val->empty() ? "NULL" : t.val->c_str());
 //    }while (t.code != '#');
-    auto lex = Lex("(a|b)*abb", "()+|ab*");
+    auto lex = Lex("(a|b)*abb", "ab");
     lex.preprocess();
     lex.buildNFA();
-    lex.showFA();
+//    lex.showNFA();
+    lex.buildDFA();
     return 0;
 }
