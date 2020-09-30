@@ -77,6 +77,7 @@ class Lex
     string reg;
 
     DStat e_closure(int s);
+    DStat e_closure(DStat T);
     DStat move(const DStat&, char);
 public:
     NFA nfa;

@@ -161,7 +161,7 @@ void Lex::showNFA()
 
 void Lex::buildDFA()
 {
-    move(e_closure(6), 'a');
+    e_closure(move(e_closure(6), 'a'));
 //    vector<DStat> Dstats;
 //    Dstats.emplace_back(e_closure(nfa.start));
 //    Dstats.back().id = 0;
@@ -197,9 +197,9 @@ Lex::DStat Lex::e_closure(int s)
         }
     }
     std::sort(stat.stats.begin(), stat.stats.end());
-    for (auto &i: stat.stats)
-        std::cout << i << ' ';
-    std::cout << '\n';
+//    for (auto &i: stat.stats)
+//        std::cout << i << ' ';
+//    std::cout << '\n';
     return stat;
 }
 
@@ -220,5 +220,23 @@ Lex::DStat Lex::move(const Lex::DStat &T, char a)
     std::sort(stat.stats.begin(), stat.stats.end());
     for (auto &i: stat.stats)
         std::cout << i << ' ';
+    std::cout << '\n';
+    return stat;
+}
+
+Lex::DStat Lex::e_closure(Lex::DStat T)
+{
+    DStat stat;
+    for (auto &i: T.stats)
+    {
+        auto tmp = e_closure(i);
+        for (auto &v: tmp.stats)
+            stat.stats.emplace_back(v);
+    }
+    std::sort(stat.stats.begin(), stat.stats.end());
+    stat.stats.erase(std::unique(stat.stats.begin(), stat.stats.end()), stat.stats.end());
+    for (auto &i: stat.stats)
+        std::cout << i << ' ';
+    std::cout << '\n';
     return stat;
 }
