@@ -183,16 +183,17 @@ Lex::DStat Lex::e_closure(int s)
     stack<int> stk;
     stk.emplace(s);
     unordered_set<int> vis;
+    vis.insert(s);
     while (!stk.empty())
     {
         int i = stk.top();
         stk.pop();
-        vis.insert(i);
         for (auto &v: nfa[i]['e'])
         {
             if (vis.find(v) != vis.end()) continue;
             stat.stats.emplace_back(v);
             stk.emplace(v);
+            vis.insert(v);
         }
     }
     std::sort(stat.stats.begin(), stat.stats.end());
