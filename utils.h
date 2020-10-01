@@ -11,10 +11,9 @@
 using std::string, std::stack;
 
 bool isOperator(char c)
-{
+{//判断是不是运算符
     switch (c)
     {
-        case '+':
         case '*':
         case '|':
         case '^':
@@ -26,9 +25,8 @@ bool isOperator(char c)
 
 
 int getPriority(int c)
-{
+{//运算符的优先级
     int level = 0; // 优先级
-
     switch (c)
     {
         case '(':
@@ -41,7 +39,6 @@ int getPriority(int c)
             level = 3;
             break;
         case '*':
-        case '+':
             level = 4;
             break;
         default:
@@ -57,11 +54,11 @@ string toSuffix(const string &expr)
     for (const auto &c: expr)
     {
         if (isOperator(c))
-        {
-            if (op.empty())
+        {//是运算符
+            if (op.empty())//栈空，直接入栈
                 op.emplace(c);
             else
-            {
+            {//优先级更大的运算符全部出栈
                 while (!op.empty())
                 {
                     int t = op.top();
@@ -78,10 +75,10 @@ string toSuffix(const string &expr)
         }
         else
         {
-            if (c == '(')
+            if (c == '(')//左括号直接入栈
                 op.emplace(c);
             else if (c == ')')
-            {
+            {//遇到右括号，一直出栈，直到遇到左括号
                 while (op.top() != '(')
                 {
                     suffix.push_back(op.top());
@@ -89,12 +86,12 @@ string toSuffix(const string &expr)
                 }
                 op.pop();
             }
-            else if (c != ' ')
-                suffix.push_back(c);
+            else
+                suffix.push_back(c);//操作数直接放入表达式中
         }
     }
     while (!op.empty())
-    {
+    {//取出剩余的运算符
         suffix.push_back(op.top());
         op.pop();
     }

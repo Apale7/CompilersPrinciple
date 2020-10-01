@@ -10,11 +10,13 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <set>
+#include <map>
 #include <iostream>
 #include <cassert>
 #include <algorithm>
+#include <fstream>
 
-using std::string, std::vector, std::unordered_map, std::unordered_set, std::set;
+using std::string, std::vector, std::unordered_map, std::unordered_set, std::set, std::map;
 
 class Lex
 {
@@ -56,31 +58,55 @@ class Lex
 
     struct DStat
     {
-        vector<int> stats;
+        set<int> stats;
         int id;
 
         bool operator<(const DStat &d) const
         {
             return stats < d.stats;
         }
+
+        bool operator==(const DStat &d) const
+        {
+            return stats == d.stats;
+        }
     };
 
     struct DFA
     {
-        vector<unordered_map<char, int>> G;
-        int start, end;
+        map<int, map<char, int>> G;
+        int start;
+        unordered_set<int> end;
+        bool match(const string &s,char (*type)(char c))
+        {
+            int now = 0;
+            for (auto &i: s)
+            {
+                char c = type(i);
+                if (G[now].count(c))
+                    now = G[now][c];
+                else
+                    return false;
+            }
+            return end.count(now);
+        }
+
     };
 
 
     unordered_set<char> charSet;
-    unordered_set<char> inputSet;
+    set<char> inputSet;
     string reg;
 
     DStat e_closure(int s);
+
     DStat e_closure(DStat T);
-    DStat move(const DStat&, char);
+
+    DStat move(const DStat &, char);
+
 public:
     NFA nfa;
+    DFA dfa;
 
     Lex(string reg, string inputset);
 
@@ -90,13 +116,15 @@ public:
 
     void preprocess();
 
-    static inline int statusCode(char a);
+    inline char statusCode(char a);
 
     void buildNFA();
 
     void buildDFA();
 
     void showNFA();
+
+    void printToFile(DFA dfa, const string &filename);
 };
 
 
